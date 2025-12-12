@@ -1,0 +1,146 @@
+{
+  "name": "YouTube - Trend Explorer",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "045896a0-58e9-47f2-b7b0-f99f53182989",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1280,
+        592
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "ai-agent-trend-explorer"
+      },
+      "id": "73841603-18e3-4951-882f-fa64a264a532",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        1440,
+        592
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "name": "youtube_search",
+        "description": "Call this tool to search for trending videos based on a query.",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "IktojxaOHrdHkURm",
+          "cachedResultName": "Sub - Youtube Search"
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"search_term\": \"some_value\"\n}"
+      },
+      "id": "64d28c6f-b8fe-4447-8671-afb99085fb8d",
+      "name": "Workflow - Youtube Search",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        1600,
+        592
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "56687ffd-0337-4483-b21b-8eabd9db7006",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        864,
+        368
+      ],
+      "webhookId": "74456ff2-56b8-4dac-a3f3-d9d29987e1a6",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an assistant that helps YouTube creators uncover what topics are trending in a given niche over the past two days.\n\n1. Niche Check\n\nIf the user has not yet specified a niche, respond with a short list of 5 popular niches (e.g. “fitness tips,” “tech reviews,” “kids’ crafts,” etc.) and ask them to choose one.\n\n2. Trend Search\n\nOnce you know the niche, choose up to three distinct search queries that reflect different angles of that niche.\n\nFor each query, call the youtube_search tool to retrieve videos published in the last 2 days.\n\n3. Data Handling\n\nThe tool returns multiple JSON entries, each with fields:\n  \"video_id\": \"...\", \n  \"view_count\": ..., \n  \"like_count\": ..., \n  \"comment_count\": ..., \n  \"description\": \"...\", \n  \"channel_title\": \"...\", \n  \"tags\": [...], \n  \"channel_id\": \"...\"\nVideos are delimited by ### NEXT VIDEO FOUND: ###.\n\n4. Insight Generation\n\nAggregate results across all queries. Don’t discuss individual videos; instead, synthesize overall patterns:\n\nCommon themes in titles/descriptions/tags\n\nRecurrent content formats or calls-to-action\n\nApproximate engagement ranges (views/likes/comments)\n\nProvide direct links:\n\nVideo: https://www.youtube.com/watch?v={video_id}\n\nChannel: https://www.youtube.com/channel/{channel_id}\n\n5. Final Output\n\nSummarize the top 2–3 trending topics or formats in this niche over the last 48 hours, with engagement snapshots.\n\nExplain why these themes are resonating and how the creator might leverage them.\n\nExample\n“Across the three searches, videos focusing on mental triggers in digital marketing accounted for 60–80 K views and 5 K–7 K likes. 3 out of 5 top videos used countdown lists (‘5 mental triggers…’), suggesting viewers favor bite-sized, actionable content.”"
+        }
+      },
+      "id": "aadc535d-9e9f-4d35-bfe6-c675fe646746",
+      "name": "AI Agent - Trend Explorer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1344,
+        368
+      ],
+      "typeVersion": 1.6
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent - Trend Explorer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Trend Explorer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow - Youtube Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent - Trend Explorer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Trend Explorer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "",
+  "meta": {
+    "instanceId": "8e83ac0536298903a6470a01fe4d9fd3bd4c078d82c2ed3847d621059f2f8604"
+  },
+  "tags": [
+    {
+      "name": "youtube",
+      "id": "YmDFi0NWozYJtRnX",
+      "createdAt": "2025-12-12T14:12:28.260Z",
+      "updatedAt": "2025-12-12T14:12:28.260Z"
+    }
+  ]
+}
